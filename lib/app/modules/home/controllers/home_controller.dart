@@ -14,6 +14,8 @@ class HomeController extends GetxController {
   RxString kurirId = "0".obs;
   RxInt weight = 1000.obs;
 
+  RxBool waiting = false.obs;
+
   List<Ongkir> dataOngkir = [];
 
   cek_ongkir() async {
@@ -24,6 +26,7 @@ class HomeController extends GetxController {
         kurirId != '0' &&
         (weight != 0 || weight != '')) {
       try {
+        waiting.value = true;
         var response = await Dio().post(
           "https://api.rajaongkir.com/starter/cost",
           data: {
@@ -38,13 +41,14 @@ class HomeController extends GetxController {
         List ongkir =
             response.data['rajaongkir']['results'][0]['costs'] as List;
         dataOngkir = Ongkir.fromJsonList(ongkir);
+        waiting.value = false;
         Get.defaultDialog(
             title: "Ongkos Kirim",
             content: Column(
               children: dataOngkir
                   .map((e) => ListTile(
                         title: Text(e.service!.toUpperCase()),
-                        subtitle: Text("Rp. "+e.cost![0].value.toString()),
+                        subtitle: Text("Rp. " + e.cost![0].value.toString()),
                       ))
                   .toList(),
             ));

@@ -157,9 +157,13 @@ class HomeView extends GetView<HomeController> {
           SizedBox(
             height: 20,
           ),
-          ElevatedButton(
-              onPressed: () => controller.cek_ongkir(),
-              child: Text("Cek Ongkir"))
+          Obx(
+            () => ElevatedButton(
+                onPressed: () =>
+                    {if (controller.waiting.isFalse) controller.cek_ongkir()},
+                child: Text(
+                    controller.waiting.isTrue ? "Loading ..." : "Cek Ongkir")),
+          )
         ],
       ),
     );
